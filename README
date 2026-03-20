@@ -12,11 +12,11 @@ Source tables:
 The raw `sp500_stocks` dataset contains a high number of missing `close` values.  
 I created a clean analytics table and enforce time-series uniqueness:
 
-- **Raw rows:** 1,891,536  
-- **Clean rows:** 617,831  
-- **Dropped:** 67.34% (rows removed due to missing/invalid values)  
-- **Duplicates in clean (symbol, date):** 0  
-- **Constraint:** `UNIQUE(symbol, date)` on `sp500_stocks_clean`
+- Raw rows:1,891,536  
+- Clean rows: 617,831  
+- Dropped: 67.34% (rows removed due to missing/invalid values)  
+- Duplicates in clean (symbol, date): 0  
+- Constraint: `UNIQUE(symbol, date)` on `sp500_stocks_clean`
 
 All analyses are based on `sp500_stocks_clean` (not the raw table).
 
