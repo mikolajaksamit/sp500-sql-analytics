@@ -1,14 +1,14 @@
-# S&P 500 SQL Analytics (PostgreSQL)
+S&P 500 SQL Analytics (PostgreSQL)
 
 Portfolio project demonstrating data cleaning, data quality checks, and time-series analytics in PostgreSQL using CTEs and window functions.
 
-## Dataset
+Dataset
 Source tables:
 - `sp500_stocks` — daily prices for S&P 500 constituents (columns used: `date`, `symbol`, `close`, `volume`)
 - `sp500_companies` — company metadata (columns used: `symbol`, `sector`)
 - `sp500_index` — index values (columns used: `date`, `"s&p50"`)
 
-## Data quality & cleaning
+Data quality & cleaning
 The raw `sp500_stocks` dataset contains a high number of missing `close` values.  
 I created a clean analytics table and enforce time-series uniqueness:
 
@@ -20,7 +20,7 @@ I created a clean analytics table and enforce time-series uniqueness:
 
 All analyses are based on `sp500_stocks_clean` (not the raw table).
 
-## How to run
+How to run
 1) Import CSVs into Postgres as:
    - `sp500_stocks`
    - `sp500_companies`
@@ -32,7 +32,7 @@ All analyses are based on `sp500_stocks_clean` (not the raw table).
 
 3) Run analysis scripts (any order).
 
-## Analyses (SQL)
+Analyses (SQL)
 - `02_maximum_historical_drawdown`  
   Max drawdown per ticker using running peak (window MAX) and worst drawdown.
 
@@ -63,7 +63,7 @@ All analyses are based on `sp500_stocks_clean` (not the raw table).
 - `11_historical_volatility_risk_analysis`  
   Volatility ranking using daily returns.
 
-## Key SQL techniques used
+Key SQL techniques used
 - CTEs (`WITH ...`)
 - Window functions: `LAG`, `ROW_NUMBER`, rolling windows (`ROWS BETWEEN ...`), running maxima
 - Ranking: `DENSE_RANK`
@@ -71,6 +71,6 @@ All analyses are based on `sp500_stocks_clean` (not the raw table).
 - Time bucketing: `EXTRACT`, `date_trunc`
 - Defensive calculations: `NULLIF` to avoid division by zero
 
-## Notes / limitations
+Notes / limitations
 - Rolling windows are based on available trading rows in the dataset (not calendar days).
 - Results depend on data availability; the clean layer excludes missing `close` values by design.
