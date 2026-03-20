@@ -1,0 +1,76 @@
+# S&P 500 SQL Analytics (PostgreSQL)
+
+Portfolio project demonstrating data cleaning, data quality checks, and time-series analytics in PostgreSQL using CTEs and window functions.
+
+## Dataset
+Source tables:
+- `sp500_stocks` — daily prices for S&P 500 constituents (columns used: `date`, `symbol`, `close`, `volume`)
+- `sp500_companies` — company metadata (columns used: `symbol`, `sector`)
+- `sp500_index` — index values (columns used: `date`, `"s&p50"`)
+
+## Data quality & cleaning
+The raw `sp500_stocks` dataset contains a high number of missing `close` values.  
+I created a clean analytics table and enforce time-series uniqueness:
+
+- **Raw rows:** 1,891,536  
+- **Clean rows:** 617,831  
+- **Dropped:** 67.34% (rows removed due to missing/invalid values)  
+- **Duplicates in clean (symbol, date):** 0  
+- **Constraint:** `UNIQUE(symbol, date)` on `sp500_stocks_clean`
+
+All analyses are based on `sp500_stocks_clean` (not the raw table).
+
+## How to run
+1) Import CSVs into Postgres as:
+   - `sp500_stocks`
+   - `sp500_companies`
+   - `sp500_index`
+
+2) Run setup scripts in order:
+- `00_data_cleaning` (creates `sp500_stocks_clean`)
+- `01_data_indexing` (indexes)
+
+3) Run analysis scripts (any order).
+
+## Analyses (SQL)
+- `02_maximum_historical_drawdown`  
+  Max drawdown per ticker using running peak (window MAX) and worst drawdown.
+
+- `03_volume_spike_anomaly_detection`  
+  Detects volume spikes vs 30-day rolling average.
+
+- `04_golden_cross_trend_strength`  
+  Trend strength based on SMA50 vs SMA200 (rolling window averages).
+
+- `05_market_beaters_win_rate_analysis`  
+  Win rate: percentage of days a stock outperforms the index (daily returns vs `"s&p50"`).
+
+- `06_seasonality_monthly_win_rate`  
+  Monthly seasonality of the index: average monthly return + % positive months.
+
+- `07_gaps_and_islands_winning_streaks`  
+  Longest winning streaks (gaps & islands pattern).
+
+- `08_flash_crash_hero`  
+  Finds the best-performing stock on the largest index down day.
+
+- `09_sector_rotation_momentum`  
+  Sector-level momentum / rotation signals.
+
+- `10_all_time_growth_leaders`  
+  Top all-time growth stocks based on first vs last available price.
+
+- `11_historical_volatility_risk_analysis`  
+  Volatility ranking using daily returns.
+
+## Key SQL techniques used
+- CTEs (`WITH ...`)
+- Window functions: `LAG`, `ROW_NUMBER`, rolling windows (`ROWS BETWEEN ...`), running maxima
+- Ranking: `DENSE_RANK`
+- Aggregations and conditional counts: `FILTER (WHERE ...)`
+- Time bucketing: `EXTRACT`, `date_trunc`
+- Defensive calculations: `NULLIF` to avoid division by zero
+
+## Notes / limitations
+- Rolling windows are based on available trading rows in the dataset (not calendar days).
+- Results depend on data availability; the clean layer excludes missing `close` values by design.
